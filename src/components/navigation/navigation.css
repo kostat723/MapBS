@@ -1,0 +1,46 @@
+header {
+    background-color: #5476aa;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 50px; /* Фиксированная высота шапки */
+    padding: 0 15px; 
+    box-sizing: border-box; 
+    
+    nav {
+        display: flex;
+        align-items: center;    
+        height: 100%; 
+        justify-content: space-between;
+        font-weight: bold;
+    }
+
+    a {
+        margin: 0 5px;
+        padding: 6px 15px; /* Оставляем только горизонтальные отступы */
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        
+    }
+
+    a:hover {
+        background-color: #2980b9;
+    }
+
+    .active {
+        background-color: #1c62ca;
+    }
+
+    #pages {
+        display: flex;
+        align-items: center;    
+    }
+
+    p {
+        color: white;
+    }
+}
+
