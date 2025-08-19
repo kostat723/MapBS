@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+import './searchPanel.css'
 
-const SearchPanel = ({ onSearch }) => {
-  const [searchValue, setSearchValue] = useState("1001")
+function SearchPanel ({ onSearch }) {
+  const [searchValue, setSearchValue] = useState("")
 
 
   return (
     <div className="searchBS">
-         <p>
-            <label>Name or number of BS: </label> 
-            <input type="text" defaultValue={searchValue} onChange={(e) => {setSearchValue(e.target.value)}} /> 
-        </p>
-        <button onClick={() => onSearch(searchValue)}>Поиск</button>
-        <button onClick={() => setSearchValue("")}>Очистить</button>        
+        <h3>Поисковик по БС</h3>
+         <input type="text" placeholder={"Name or number of BS:"} value={searchValue} onChange={(e) => {setSearchValue(e.target.value)}} /> 
+        <div className='buttons'>
+            <button onClick={() => onSearch(searchValue)}>Поиск</button>
+            <button onClick={() => setSearchValue("")}>Очистить</button>   
+        </div>             
     </div>
   );
 };

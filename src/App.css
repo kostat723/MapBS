@@ -1,6 +1,11 @@
 #main {
-  margin-top: 60px;
-  height: 100px;
+  margin-top: 50px;
+  min-height: 100%;
+  position: relative;
+}
+
+body {
+  height: 100%;
 }
 
 /* #app {

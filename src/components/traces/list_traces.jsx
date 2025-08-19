@@ -1,7 +1,7 @@
 
 
 function List_traces () {
-
+    const linkes = [{name: "", href: "", target: ""}]
 
     return (
         <ul>

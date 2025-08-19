@@ -1,52 +1,10 @@
-// import { MapContainer, TileLayer, Marker, Popup, useMap,  } from "react-leaflet";
-// import React from "react";
-// import "leaflet/dist/leaflet.css";
-// // import icon from "../Images/icon.png";
-// // import L from "leaflet";
-
-// export default function Map() {
-//   const latitude = 48.578924
-//   const longitude = 39.303449
-
-// //   const customIcon = new L.Icon({//creating a custom icon to use in Marker
-// //     iconUrl: icon,
-// //     iconSize: [25, 35],
-// //     iconAnchor: [5, 30]
-// //   });
-
-//   function MapView() {
-//     let map = useMap();
-//     map.setView([latitude, longitude], map.getZoom());
-//      //Sets geographical center and zoom for the view of the map
-//     return null;
-//   }
-
-//   return (
-//     <MapContainer
-//       style={{ height: "100vh", width: "100%" }}
-//       center={[latitude, longitude]}
-//       classsName="map"
-//       zoom={10}
-//       scrollWheelZoom={true}
-//     >
-//       <TileLayer
-//         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> 
-//         contributors'
-//         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//       />
-//       <Marker position={[latitude, longitude]}>
-//         <Popup><h1>OGO</h1><p>Это</p></Popup>
-//       </Marker>
-//       <MapView />
-//     </MapContainer>
-//   );
-// }
-
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './mapView.css'
 import PropTypes from 'prop-types';
 import SearchPanel from './searchPanel';
+import InfoPanel from './infoPanel';
 
 // Исправляем иконки Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -56,14 +14,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-const Map = ({ baseStations }) => {
+
+function Censorship(){
+  return (
+    <div style={{backgroundColor: 'black', position: 'absolute', bottom: '0', right: '0', height: '20px', width: '300px', zIndex: '2'}}></div>
+  )
+}
+
+
+function Map ({ baseStations }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const layersRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [StationHover, onStationHover] = useState('');
+  const [stationHover, onStationHover] = useState('');
 
 
 
@@ -71,8 +37,8 @@ const Map = ({ baseStations }) => {
   useEffect(() => {
     if (mapRef.current && !mapInstance.current) {
       mapInstance.current = L.map(mapRef.current, {
-        center: [55.751244, 37.618423],
-        zoom: 10,
+        center: [48.569336, 39.314759],
+        zoom: 14,
         zoomControl: true
       });
 
@@ -80,6 +46,7 @@ const Map = ({ baseStations }) => {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20,
+        minZoom: 10
       }).addTo(mapInstance.current);
 
       layersRef.current = L.layerGroup().addTo(mapInstance.current);
@@ -126,7 +93,7 @@ const Map = ({ baseStations }) => {
             <p style="margin: 2px 0;"><strong>ID:</strong> ${station.id}</p>
             <p style="margin: 2px 0;"><strong>Адрес:</strong> ${station.address}</p>
             <p style="margin: 2px 0;"><strong>Тип:</strong> ${station.type}</p>
-            <p style="margin: 2px 0;"><strong>Операторов:</strong> ${station.operator || 'Не указан'}</p>
+            <p style="margin: 2px 0;"><strong>Оператор(ы):</strong> ${station.operator || 'Не указан'}</p>
           </div>
         `);
 
@@ -183,7 +150,7 @@ const Map = ({ baseStations }) => {
       );
 
       if (foundStation) {
-        mapInstance.current.setView([foundStation.lat, foundStation.lng], 14, {
+        mapInstance.current.setView([foundStation.lat, foundStation.lng], 16, {
           animate: true,
           duration: 1
         });
@@ -194,13 +161,13 @@ const Map = ({ baseStations }) => {
 
   return (
     <>
-      <div>
-        <SearchPanel onSearch={setSearchQuery}/>
-      </div>
+      <SearchPanel onSearch={setSearchQuery}/>
+      <InfoPanel station={stationHover} getSectorColor={getSectorColor}/>
+      <Censorship />
       <div 
         ref={mapRef} 
         className="w-full h-full rounded-lg shadow-elevated"
-        style={{ height: '100vh', zIndex: 1}}
+        style={{ height: '95vh', zIndex: 1, backgroundSize: 'cover'}}
       />
     </>
     

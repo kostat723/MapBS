@@ -1,0 +1,50 @@
+.searchBS {
+    z-index: 2;
+    position: absolute;
+    background-color: rgb(12, 73, 143);
+    border-radius: 10px;
+    margin: 10px;
+    margin-left: 50px;
+    align-items: center;
+    align-content: center;
+    padding: 10px;
+    
+    h3{
+        margin: 5px 0px;
+    }
+
+    * {
+        color: white;
+    }
+
+    .buttons{
+        justify-content: center; 
+        align-items: center;
+        display: flex;
+        margin: 5px 0px;
+    }
+
+    input {
+        border-radius: 10px;
+        height: 20px;
+        margin: 0px;
+        padding: 5px;
+        margin: 5px 0px;
+        background-color: rgb(31, 73, 134);
+    }
+
+    .buttons {
+        justify-content: space-between;
+    }
+
+    button {
+        padding: 10px;
+        background-color: rgb(8, 33, 87);
+        border-radius: 10px;
+    }
+
+    button:hover {
+        background-color: rgb(43, 54, 150);
+    }
+}
+
