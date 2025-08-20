@@ -28,7 +28,8 @@ function Map ({ baseStations }) {
   const layersRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchFinded, setSearchFinded] = useState('empty');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [stationHover, onStationHover] = useState('');
 
 
@@ -114,24 +115,27 @@ function Map ({ baseStations }) {
             opacity: 0.8,
           }).addTo(layersRef.current);
 
-          sectorPolygon.bindPopup(`
-            <div style="color: #1f2937; font-family: system-ui;">
-              <h4 style="margin: 0 0 8px 0; font-weight: bold;">Сектор ${sector.id}</h4>
-              <p style="margin: 2px 0;"><strong>Технология:</strong> ${sector.technology}</p>
-              <p style="margin: 2px 0;"><strong>Азимут:</strong> ${sector.azimuth}°</p>
-              <p style="margin: 2px 0;"><strong>Ширина луча:</strong> ${sector.beamwidth}°</p>
-              <p style="margin: 2px 0;"><strong>Дальность:</strong> ${sector.range}м</p>
-              ${sector.power ? `<p style="margin: 2px 0;"><strong>Мощность:</strong> ${sector.power} дБм</p>` : ''}
-            </div>
-          `);
+          sectorPolygon.bindPopup( () => {
+            onStationHover(station);
+            return (
+              `<div style="color: #1f2937; font-family: system-ui;">
+                <h4 style="margin: 0 0 8px 0; font-weight: bold;">Сектор ${sector.id}</h4>
+                <p style="margin: 2px 0;"><strong>Технология:</strong> ${sector.technology}</p>
+                <p style="margin: 2px 0;"><strong>Азимут:</strong> ${sector.azimuth}°</p>
+                <p style="margin: 2px 0;"><strong>Ширина луча:</strong> ${sector.beamwidth}°</p>
+                <p style="margin: 2px 0;"><strong>Дальность:</strong> ${sector.range}м</p>
+                ${sector.power ? `<p style="margin: 2px 0;"><strong>Мощность:</strong> ${sector.power} дБм</p>` : ''}
+              </div>`
+            )
+          });  
 
           sectorPolygon.on('mouseover', () => {
-            onStationHover(station);
+            // onStationHover(station);
             sectorPolygon.setStyle({ fillOpacity: 0.5 });
           });
 
           sectorPolygon.on('mouseout', () => {
-            onStationHover(null);
+            // onStationHover(null);
             sectorPolygon.setStyle({ fillOpacity: 0.3 });
           });
         });
@@ -139,14 +143,16 @@ function Map ({ baseStations }) {
     }
   }, [baseStations, onStationHover, isLoaded]);
 
-  // Поиск
-  useEffect(() => {
-    if (searchQuery && mapInstance.current && baseStations.length > 0) {
+
+// Поиск
+  function searchQueryStation(query) {
+    console.log(query)
+    if (query && mapInstance.current && baseStations.length > 0) {
       const foundStation = baseStations.find(
         (station) =>
-          station.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          station.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          station.name.toLowerCase().includes(searchQuery.toLowerCase())
+          station.id.toLowerCase().includes(query.toLowerCase()) ||
+          station.address.toLowerCase().includes(query.toLowerCase()) ||
+          station.name.toLowerCase().includes(query.toLowerCase())
       );
 
       if (foundStation) {
@@ -155,13 +161,21 @@ function Map ({ baseStations }) {
           duration: 1
         });
         onStationHover(foundStation);
+        setSearchFinded('success');
+      }
+      else {
+        setSearchFinded('error');
       }
     }
-  }, [searchQuery, baseStations, onStationHover]);
+    else if (query == ''){
+      setSearchFinded('empty');
+      onStationHover('');
+    }
+  }
 
   return (
     <>
-      <SearchPanel onSearch={setSearchQuery}/>
+      <SearchPanel onSearch={searchQueryStation} findedBS={searchFinded}/>
       <InfoPanel station={stationHover} getSectorColor={getSectorColor}/>
       <Censorship />
       <div 
