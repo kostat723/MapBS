@@ -5,6 +5,7 @@ import './mapView.css'
 import PropTypes from 'prop-types';
 import SearchPanel from './searchPanel';
 import InfoPanel from './infoPanel';
+import FilterPanel from './filterPanel'
 
 // Исправляем иконки Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -88,15 +89,18 @@ function Map ({ baseStations }) {
           icon: stationIcon 
         }).addTo(layersRef.current);
 
-        marker.bindPopup(`
+        marker.bindPopup(() => {
+          onStationHover(station);
+          return (`
           <div style="color: #1f2937; font-family: system-ui;">
             <h3 style="margin: 0 0 8px 0; font-weight: bold;">${station.name}</h3>
             <p style="margin: 2px 0;"><strong>ID:</strong> ${station.id}</p>
             <p style="margin: 2px 0;"><strong>Адрес:</strong> ${station.address}</p>
             <p style="margin: 2px 0;"><strong>Тип:</strong> ${station.type}</p>
             <p style="margin: 2px 0;"><strong>Оператор(ы):</strong> ${station.operator || 'Не указан'}</p>
-          </div>
-        `);
+          </div>`
+          )
+        });
 
         station.sectors.forEach((sector) => {
           const sectorPath = createSectorPath(
@@ -150,9 +154,9 @@ function Map ({ baseStations }) {
     if (query && mapInstance.current && baseStations.length > 0) {
       const foundStation = baseStations.find(
         (station) =>
-          station.id.toLowerCase().includes(query.toLowerCase()) ||
+          station.id.toLowerCase() == query.toLowerCase() ||
           station.address.toLowerCase().includes(query.toLowerCase()) ||
-          station.name.toLowerCase().includes(query.toLowerCase())
+          station.name.toLowerCase() == query.toLowerCase()
       );
 
       if (foundStation) {
@@ -177,6 +181,7 @@ function Map ({ baseStations }) {
     <>
       <SearchPanel onSearch={searchQueryStation} findedBS={searchFinded}/>
       <InfoPanel station={stationHover} getSectorColor={getSectorColor}/>
+      <FilterPanel />
       <Censorship />
       <div 
         ref={mapRef} 

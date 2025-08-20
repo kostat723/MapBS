@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './infoPanel.css';
+import './panel.css';
+import './infoPanel.css'
 import { Radio, MapPin, Zap, Signal, ChevronRight, ChevronLeft } from 'lucide-react';
 
 function InfoPanel({ station, getSectorColor }) {
@@ -12,7 +13,7 @@ function InfoPanel({ station, getSectorColor }) {
   // Проверяем, что station существует
   if (!station) {
     return (
-      <div className={`infoBS ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className={`panel ${isCollapsed ? 'collapsed' : ''} panel-infoBS`}>
         <button className="toggle-btn" onClick={togglePanel}>
           {isCollapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
@@ -28,7 +29,7 @@ function InfoPanel({ station, getSectorColor }) {
   }
 
   return (
-    <div className={`infoBS ${isCollapsed ? 'collapsed' : ''}`}>
+    <div className={`panel ${isCollapsed ? 'collapsed' : ''} panel-infoBS`}>
       {/* Кнопка переключения */}
       <button className="toggle-btn" onClick={togglePanel}>
         {isCollapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}

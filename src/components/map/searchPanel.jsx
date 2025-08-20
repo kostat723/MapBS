@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import './searchPanel.css';
 import { Search, X } from 'lucide-react';
+import Button from '../ui/Button/Button';
+import Input from '../ui/Input/Input';
+
 
 function SearchPanel({ onSearch, findedBS }) {
   const [searchValue, setSearchValue] = useState("");
@@ -28,7 +31,7 @@ function SearchPanel({ onSearch, findedBS }) {
       </div>
       
       <div className="search-input-container">
-        <input 
+        <Input 
           className={`search-input ${findedBS}`}
           type="text" 
           placeholder="Название или номер БС..."
@@ -39,15 +42,13 @@ function SearchPanel({ onSearch, findedBS }) {
       </div>
       
       <div className='search-buttons'>
-        <button className="search-btn" onClick={handleSearch}>
-          <Search size={16} />
+        <Button className="search-btn" icon={Search} onClick={handleSearch}>
           Найти
-        </button>
-        <button className="clear-btn" onClick={handleClear}>
-          <X size={16} />
+        </Button>
+        <Button className="clear-btn" icon={X} onClick={handleClear}>
           Очистить
-        </button>   
-      </div>             
+        </Button>   
+      </div>           
     </div>
   );
 };
