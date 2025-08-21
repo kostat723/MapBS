@@ -1,0 +1,29 @@
+
+
+.form {
+    box-sizing: border-box;
+    position: relative;
+    width: 300px;
+    margin: 0 auto;
+    display: flex;
+
+    input {
+        height: 42px;
+        padding-left: 10px;
+        border: 2px;
+        border: px solid var(--border-color);
+        border-radius: 15px 0 0 15px;
+        outline: none;
+    }
+
+    input:focus{
+        box-shadow: none;
+    }
+
+    button {
+        height: 42px;
+        border: none;        
+        border-radius: 0 15px 15px 0;
+        cursor: pointer;
+    }
+}

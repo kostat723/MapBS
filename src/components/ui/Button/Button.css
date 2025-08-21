@@ -4,10 +4,13 @@
     justify-content: center;
     gap: 8px;
     padding: 12px;
-    border: none;
+    border: 2px;
     border-radius: 12px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
+    background: var(--button-background);
+    border-color: var(--button-border-color);
+    color: var(--button-color);
 }

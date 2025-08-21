@@ -6,6 +6,37 @@
 
 body {
   height: 100%;
+  color: var(--text-color)
+}
+
+:root {
+  /* BUTTON */
+  --button-background: rgb(32, 92, 14);
+  --button-border-color: rgb(25, 65, 12);
+  --button-color: white;
+  
+  /* INPUT  */
+  --input-background: rgb(48, 109, 29);
+  --input-background-focus: rgb(39, 107, 18);
+  --input-border-color: rgb(22, 56, 11);
+  
+
+  /* TEXT */
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-color: white;
+
+  /* ALL */
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --accent-color: #e74c3c;  
+  --background: linear-gradient(135deg, rgb(69, 145, 46) 0%, rgb(58, 124, 38) 100%);
+  --surface: #ffffff;
+  --border-color: rgb(25, 65, 12);
+  --error-color: #e74c3c;
+  --success-color: #27ae60;
+  
+  
 }
 
 /* #app {

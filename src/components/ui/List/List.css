@@ -1,0 +1,57 @@
+.list-header {
+    position: relative;
+    display: flex;
+    width: 100%;
+
+   .point-header{
+        padding-right: 30px;
+        width: 100%;
+   } 
+   .button-header{
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+   }
+}
+
+
+
+.list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    max-height: 300px;
+}
+
+/* Стили для скроллбара */
+.list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Элементы секторов */
+.item {
+    margin-bottom: 8px;
+}
+
+/* .sector-item {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.sector-item:nth-child(1) { animation-delay: 0.1s; }
+.sector-item:nth-child(2) { animation-delay: 0.2s; }
+.sector-item:nth-child(3) { animation-delay: 0.3s; }  */

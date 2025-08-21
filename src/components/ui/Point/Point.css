@@ -1,0 +1,37 @@
+.point-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 8px 0;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.point-container:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.header {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.children {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    word-break: break-word;
+}

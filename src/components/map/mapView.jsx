@@ -3,9 +3,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './mapView.css'
 import PropTypes from 'prop-types';
-import SearchPanel from './searchPanel';
-import InfoPanel from './infoPanel';
-import FilterPanel from './filterPanel'
+import InfoPanel from './panels/panelInfo';
+import PanelSettings from './panels/panelSettings';
 
 // Исправляем иконки Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -150,7 +149,6 @@ function Map ({ baseStations }) {
 
 // Поиск
   function searchQueryStation(query) {
-    console.log(query)
     if (query && mapInstance.current && baseStations.length > 0) {
       const foundStation = baseStations.find(
         (station) =>
@@ -179,9 +177,8 @@ function Map ({ baseStations }) {
 
   return (
     <>
-      <SearchPanel onSearch={searchQueryStation} findedBS={searchFinded}/>
+      <PanelSettings onSearch={searchQueryStation} findedBS={searchFinded}/>
       <InfoPanel station={stationHover} getSectorColor={getSectorColor}/>
-      <FilterPanel />
       <Censorship />
       <div 
         ref={mapRef} 
