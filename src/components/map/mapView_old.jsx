@@ -14,14 +14,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Расширяем Layer для хранения custom data
-L.Layer.include({
-  setData: function(data) {
-    this.data = data;
-    return this;
-  }
-});
-
 
 function Censorship(){
   return (
@@ -33,17 +25,13 @@ function Censorship(){
 function Map ({ baseStations }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
-  const [personalSettings, setPersonalSettings] = useState({
-      standards: {}
-  });
-  const layersRef = useRef({
-    sites: L.layerGroup(),
-    sectors: {}
-  });
-
-
+  const layersRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const [searchFinded, setSearchFinded] = useState('empty');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [stationHover, onStationHover] = useState('');
+  const [showSectors, onShowSectors] = useState(false);
 
 
 
@@ -63,6 +51,7 @@ function Map ({ baseStations }) {
         minZoom: 10
       }).addTo(mapInstance.current);
 
+      layersRef.current = L.layerGroup().addTo(mapInstance.current);
       setIsLoaded(true);
     }
 
@@ -74,11 +63,11 @@ function Map ({ baseStations }) {
     };
   }, []);
 
-  function createStationIcon(type) {
+  function createStationIcon(station) {
     return L.divIcon({
           html: `
             <div style="
-              background-color: ${getStationColor(type)};
+              background-color: ${getStationColor(station.type)};
               width: 12px;
               height: 12px;
               border-radius: 50%;
@@ -93,171 +82,120 @@ function Map ({ baseStations }) {
       )
   }
 
-  function setBindPopupMarker(marker){
-    marker.bindPopup(() => {
-      onStationHover(marker.data.station);
-      return (`
-      <div style="color: #1f2937; font-family: system-ui;">
-        <h3 style="margin: 0 0 8px 0; font-weight: bold;">${marker.data.station.name}</h3>
-        <p style="margin: 2px 0;"><strong>ID:</strong> ${marker.data.station.id}</p>
-        <p style="margin: 2px 0;"><strong>Адрес:</strong> ${marker.data.station.address}</p>
-        <p style="margin: 2px 0;"><strong>Тип:</strong> ${marker.data.station.type}</p>
-        <p style="margin: 2px 0;"><strong>Оператор(ы):</strong> ${marker.data.station.operator || 'Не указан'}</p>
-      </div>`
-      )
-    })
-  }
-
-  function createMarker(station, stationIcon, layer){
+  function createMarker(station, stationIcon){
     const marker = L.marker([station.lat, station.lng], { 
       icon: stationIcon 
-    }).setData({station: station}).addTo(layer);
+    }).addTo(layersRef.current);
 
-    marker.on('click', () => {
-      onStationHover(marker.data.station);
-    })
-    // setBindPopupMarker(marker);
-  }
-
-
-  function setBindPopupPolgon(polygon){
-      polygon.bindPopup( () => {
-      return (
-        `<div style="color: #1f2937; font-family: system-ui;">
-          <h4 style="margin: 0 0 8px 0; font-weight: bold;">Сектор ${polygon.data.sector.id}</h4>
-          <p style="margin: 2px 0;"><strong>Технология:</strong> ${polygon.data.sector.technology}</p>
-          <p style="margin: 2px 0;"><strong>Азимут:</strong> ${polygon.data.sector.azimuth}°</p>
-          <p style="margin: 2px 0;"><strong>Ширина луча:</strong> ${polygon.data.sector.beamwidth}°</p>
-          <p style="margin: 2px 0;"><strong>Дальность:</strong> ${polygon.data.sector.range}м</p>
-          ${polygon.data.sector.power ? `<p style="margin: 2px 0;"><strong>Мощность:</strong> ${polygon.data.sector.power} дБм</p>` : ''}
-        </div>`
+    marker.bindPopup(() => {
+      onStationHover(station);
+      return (`
+      <div style="color: #1f2937; font-family: system-ui;">
+        <h3 style="margin: 0 0 8px 0; font-weight: bold;">${station.name}</h3>
+        <p style="margin: 2px 0;"><strong>ID:</strong> ${station.id}</p>
+        <p style="margin: 2px 0;"><strong>Адрес:</strong> ${station.address}</p>
+        <p style="margin: 2px 0;"><strong>Тип:</strong> ${station.type}</p>
+        <p style="margin: 2px 0;"><strong>Оператор(ы):</strong> ${station.operator || 'Не указан'}</p>
+      </div>`
       )
-    });  
+    });
+    return marker;
   }
 
-  function createSectorPolygon(sectorPath, sector){
+  function createSectorPolygon(sectorPath, sector, station){
     const sectorPolygon = L.polygon(sectorPath, {
       fillColor: getSectorColor(sector.technology),
       fillOpacity: 0.3,
       color: getSectorColor(sector.technology),
       weight: 2,
       opacity: 0.8,
-    }).setData({sector: sector});
+    }).addTo(layersRef.current);
 
-    if (!(sector.technology in layersRef.current.sectors)){
-      layersRef.current.sectors[sector.technology] = L.layerGroup();
-      // layersRef.current.sectors[sector.technology].addTo(mapInstance.current);
-    }
-
-    sectorPolygon.addTo(layersRef.current.sectors[sector.technology])
-
-    setBindPopupPolgon(sectorPolygon);
+    sectorPolygon.bindPopup( () => {
+      onStationHover(station);
+      return (
+        `<div style="color: #1f2937; font-family: system-ui;">
+          <h4 style="margin: 0 0 8px 0; font-weight: bold;">Сектор ${sector.id}</h4>
+          <p style="margin: 2px 0;"><strong>Технология:</strong> ${sector.technology}</p>
+          <p style="margin: 2px 0;"><strong>Азимут:</strong> ${sector.azimuth}°</p>
+          <p style="margin: 2px 0;"><strong>Ширина луча:</strong> ${sector.beamwidth}°</p>
+          <p style="margin: 2px 0;"><strong>Дальность:</strong> ${sector.range}м</p>
+          ${sector.power ? `<p style="margin: 2px 0;"><strong>Мощность:</strong> ${sector.power} дБм</p>` : ''}
+        </div>`
+      )
+    });  
 
     sectorPolygon.on('mouseover', () => {
+      // onStationHover(station);
       sectorPolygon.setStyle({ fillOpacity: 0.5 });
     });
 
     sectorPolygon.on('mouseout', () => {
+      // onStationHover(null);
       sectorPolygon.setStyle({ fillOpacity: 0.3 });
     });
   }
 
   // Обновление базовых станций
   useEffect(() => {
-    if (isLoaded && layersRef.current.sites && baseStations && baseStations.length > 0) {
-      
-      layersRef.current.sites.clearLayers();
+    if (isLoaded && layersRef.current && baseStations.length > 0) {
+      layersRef.current.clearLayers();
 
       baseStations.forEach((station) => {
-        createMarker(station, createStationIcon(station.type), layersRef.current.sites)  
+        const stationIcon = createStationIcon(station);
 
-        station.sectors.forEach((sector) => {
-          const sectorPath = createSectorPath(
-            station.lat,
-            station.lng,
-            sector.azimuth,
-            sector.beamwidth,
-            sector.range
+        createMarker(station, stationIcon)
+
+        if (showSectors){
+          station.sectors.forEach((sector) => {
+            const sectorPath = createSectorPath(
+              station.lat,
+              station.lng,
+              sector.azimuth,
+              sector.beamwidth,
+              sector.range
           );
           createSectorPolygon(sectorPath, sector, station)          
         });
+        }
+        
       });
-      layersRef.current.sites.addTo(mapInstance.current);
-
-      const standardsObj = {};
-      Object.keys(layersRef.current.sectors).forEach(standard => {
-        standardsObj[standard] = false; // или false, по умолчанию
-      });
-      setPersonalSettings({...personalSettings, standards: standardsObj})
     }
-  }, [isLoaded]);
+  }, [baseStations, onStationHover, isLoaded, showSectors]);
 
-
-  function runSettings(){
-      if (mapInstance.current){
-        Object.entries(personalSettings.standards).map(([standard, isEnabled]) => {
-          mapInstance.current.removeLayer(layersRef.current.sectors[standard])
-          if (isEnabled) {            
-            mapInstance.current.addLayer(layersRef.current.sectors[standard])
-          }
-        })        
-      }     
-  }
-
-  function getTips(query) {
-    if (query && mapInstance.current && layersRef.current.sites.getLayers().length > 0){
-      let foundStations = [];
-      layersRef.current.sites.eachLayer(layer => {
-        if (layer instanceof L.Marker && layer.data.station) {
-          if (layer.data.station.name.toLowerCase().includes(query.toLowerCase()) ||
-              layer.data.station.address.toLowerCase().includes(query.toLowerCase())) {
-              foundStations.push(`${layer.data.station.name} | ${layer.data.station.address}`)
-          }  
-        }   
-      });
-      return foundStations;
-    }
-  }
-
-  
 
 // Поиск
   function searchQueryStation(query) {
-    if (query && mapInstance.current && layersRef.current.sites.getLayers().length > 0) {
-      let foundStation = null;
-      layersRef.current.sites.eachLayer(layer => {
-        if (layer instanceof L.Marker && layer.data.station && layer.data.station.name === query) {
-          foundStation = layer;
-          return
-        }              
-      });
-      // console.log(foundStation)
+    if (query && mapInstance.current && baseStations.length > 0) {
+      const foundStation = baseStations.find(
+        (station) =>
+          station.id.toLowerCase() == query.toLowerCase() ||
+          station.address.toLowerCase().includes(query.toLowerCase()) ||
+          station.name.toLowerCase() == query.toLowerCase()
+      );
+
       if (foundStation) {
-        mapInstance.current.setView([foundStation.data.station.lat, foundStation.data.station.lng], 16, {
+        mapInstance.current.setView([foundStation.lat, foundStation.lng], 16, {
           animate: true,
           duration: 1
         });
-        // console.log(foundStation.data.station)
-        onStationHover(foundStation.data.station);
-        // setSearchFinded('success');
+        onStationHover(foundStation);
+        setSearchFinded('success');
       }
       else {
-        // setSearchFinded('error');
+        setSearchFinded('error');
       }
     }
     else if (query == ''){
-      // setSearchFinded('empty');
+      setSearchFinded('empty');
       onStationHover('');
     }
   }
-
-
-
   
 
   return (
     <>
-      <PanelSettings onSearch={searchQueryStation} getTips={getTips} personalSettings={personalSettings} setPersonalSettings={setPersonalSettings} runSettings={runSettings}/>
+      <PanelSettings onSearch={searchQueryStation} findedBS={searchFinded} setShowSectors={()=>{onShowSectors(!showSectors)}}/>
       <InfoPanel station={stationHover} getSectorColor={getSectorColor}/>
       <Censorship />
       <div 

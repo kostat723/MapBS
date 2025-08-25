@@ -6,14 +6,17 @@ import './FormSearch.css'
 
 function FormSearch({
     onSubmit,
+    onChange,
     className,
     placeholder="Искать здесь...",
-    type='text'
+    type='text',
+    tips = []
 }) {
   const [formData, setFormData] = useState("")
 
   const handleInputChange = (event) => {
     setFormData(event.target.value);
+    // onChange(event.target.value);
   };
 
   function handleSubmitForm(event) {
@@ -29,7 +32,7 @@ function FormSearch({
 
   return (
     <form onSubmit={handleSubmitForm} className={`form ${className}`}>
-      <Input placeholder={placeholder} type={type} onChange={handleInputChange} onKeyPress={handleKeyPress}/>
+      <Input placeholder={placeholder} type={type} onChange={handleInputChange} onKeyPress={handleKeyPress} /*tips={tips} onSelect={handleSubmitForm}*/ />
       <Button icon={Search} type="submit">Поиск</Button>
     </form>
   );

@@ -1,14 +1,38 @@
 .input {
-    width: 100%;
+    width: auto;
     box-sizing: border-box; 
     padding: 12px 16px;
     border: 2px solid var(--input-border-color);
     border-radius: 12px;
     background: var(--input-background);
-    font-size: 14px;
     transition: all 0.3s ease;
     outline: none;
     color: var(--text-color);
+}
+
+.drop-down {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    /* background: white; */
+    /* border: 2px solid #007bff; */
+    /* border-top: none; */
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: scroll;
+    z-index: 2000
+}
+
+.tip {    
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    background: var(--input-background);
+}
+
+.tip:hover {
+    background: var(--input-background-focus);
 }
 
 .input::placeholder {

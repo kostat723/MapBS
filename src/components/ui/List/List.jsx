@@ -2,7 +2,7 @@ import './List.css'
 import Point from '../Point/Point'
 import Button from '../Button/Button'
 import { useState } from 'react'
-import { Radio, MapPin, Zap, Signal, ChevronUp, ChevronDown } from 'lucide-react';
+import { AlignJustify, ChevronUp, ChevronDown } from 'lucide-react';
 
 function List({
     children,
@@ -25,7 +25,7 @@ function List({
             <div className='list-header'>
                 <Point className='point-header' icon={Icon} header={header}/>
                 <Button className='button-header' onClick={togglePanel} >
-                    {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+                    {isCollapsed ? <ChevronDown size={16} /> : <AlignJustify size={16} />}
                 </Button>
             </div>
             

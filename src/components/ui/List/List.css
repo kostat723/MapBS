@@ -6,6 +6,7 @@
    .point-header{
         padding-right: 30px;
         width: 100%;
+        min-height: 16px;
    } 
    .button-header{
         position: absolute;
